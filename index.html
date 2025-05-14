@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>CadastroAssync</title>
+</head>
+<body>
+    <div class="caixa">
+    <h1>Cadastro assync</h1>
+    <div class="caixa2">
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="text" id="cpf" placeholder="CPF">
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="text" id="celular" placeholder="Celular">
+        <input type="text" id="endereco" placeholder="Endereço completo">
+        <input type="text" id="rg" placeholder="RG">
+        <input type="date" id="nascimento" placeholder="Data de nascimento">
+        <input type="text" id="tel_comercial" placeholder="Telefone comercial">
+        <input type="text" id="tel_residencial" placeholder="Telefone residencial">
+        <input type="text" id="tel_recado" placeholder="Telefone para recados">
+
+        <button id="submit">Enviar</button>
+    </div>
+</div>
+
+    <div id="popup" class="popup"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('submit');
+        const popup = document.getElementById('popup');
+
+        function showPopup(message, isSuccess) {
+            popup.textContent = message;
+            popup.classList.remove('success', 'error');
+            popup.classList.add(isSuccess ? 'success' : 'error');
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+        }
+
+        button.addEventListener('click', function () {
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const email = document.getElementById('email').value;
+            const celular = document.getElementById('celular').value;
+            const endereco = document.getElementById('endereco').value;
+            const rg = document.getElementById('rg').value;
+            const nascimento = document.getElementById('nascimento').value;
+            const tel_comercial = document.getElementById('tel_comercial').value;
+            const tel_residencial = document.getElementById('tel_residencial').value;
+            const tel_recado = document.getElementById('tel_recado').value;
+
+            if (
+                !nome || !cpf || !email || !celular || !endereco || !rg ||
+                !nascimento || !tel_comercial || !tel_residencial || !tel_recado
+            ) {
+                showPopup("Preencha todos os campos!", false);
+                return;
+            }
+
+            const data =
+                'nome=' + nome +
+                '&cpf=' + cpf +
+                '&email=' + email +
+                '&celular=' + celular +
+                '&endereco=' + endereco +
+                '&rg=' + rg +
+                '&nascimento=' + nascimento +
+                '&tel_comercial=' + tel_comercial +
+                '&tel_residencial=' + tel_residencial +
+                '&tel_recado=' + tel_recado;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'dados.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.responseType = 'json'; // Define o tipo da resposta como JSON
+
+            xhr.onload = function () {
+                if (xhr.status === 200 && xhr.response) {
+                const resposta = xhr.response;
+                showPopup(resposta.message, resposta.success);
+            } else {
+                showPopup("Erro inesperado na resposta", false);
+                }
+}           ;
+
+
+            xhr.onerror = function () {
+                showPopup("Erro na requisição", false);
+            };
+
+            xhr.send(data);
+        });
+    });
+    </script>
+</body>
+</html>
+
